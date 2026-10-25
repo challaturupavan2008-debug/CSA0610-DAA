@@ -1,3 +1,4 @@
+#Q6: Exhaustive Search for Package Selection
 
 def package_selection(weights, values, capacity):
     n = len(weights)
