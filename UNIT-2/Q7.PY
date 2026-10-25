@@ -1,4 +1,4 @@
-#Improved Package Selection Using Branch and Bound
+#Q7: Improved Package Selection Using Branch and Bound
 
 def package_selection(weights, values, capacity):
     n = len(weights)
