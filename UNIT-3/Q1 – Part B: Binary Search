@@ -1,0 +1,49 @@
+#Q1 – Part B: Binary Search
+
+n = int(input("Enter the number of elements: "))
+
+a = []
+
+print("Enter the sorted elements:")
+for i in range(n):
+    a.append(int(input()))
+
+key = int(input("Enter the element to search: "))
+
+low = 0
+high = n - 1
+comparisons = 0
+found = False
+
+while low <= high:
+    mid = (low + high) // 2
+    comparisons += 1
+
+    if a[mid] == key:
+        print("Element found at position:", mid + 1)
+        found = True
+        break
+
+    elif a[mid] < key:
+        low = mid + 1
+
+    else:
+        high = mid - 1
+
+if found == False:
+    print("Element not found")
+
+print("Number of comparisons:", comparisons)
+
+Sample Output 1 – Successful Search
+Enter the number of elements: 5
+Enter the sorted elements:
+10
+20
+30
+40
+50
+Enter the element to search: 30
+
+Element found at position: 3
+Number of comparisons: 1
