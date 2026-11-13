@@ -1,0 +1,45 @@
+#Q1 – Part A: Finding Maximum and Minimum
+
+def find_max_min(a, low, high):
+    global comparisons
+
+    if low == high:
+        return a[low], a[low]
+
+    if high == low + 1:
+        comparisons += 1
+
+        if a[low] > a[high]:
+            return a[low], a[high]
+        else:
+            return a[high], a[low]
+
+    mid = (low + high) // 2
+
+    max1, min1 = find_max_min(a, low, mid)
+    max2, min2 = find_max_min(a, mid + 1, high)
+
+    comparisons += 2
+
+    maximum = max(max1, max2)
+    minimum = min(min1, min2)
+
+    return maximum, minimum
+
+
+n = int(input("Enter the number of elements: "))
+
+a = []
+print("Enter the elements:")
+
+for i in range(n):
+    a.append(int(input()))
+
+comparisons = 0
+
+maximum, minimum = find_max_min(a, 0, n - 1)
+
+print("Maximum element:", maximum)
+print("Minimum element:", minimum)
+print("Number of comparisons:", comparisons)
+
