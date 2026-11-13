@@ -43,3 +43,18 @@ print("Maximum element:", maximum)
 print("Minimum element:", minimum)
 print("Number of comparisons:", comparisons)
 
+
+Sample Output:
+
+Enter the number of elements: 5
+Enter the elements:
+10
+50
+20
+40
+30
+
+Maximum element: 50
+Minimum element: 10
+Number of comparisons: 6
+
