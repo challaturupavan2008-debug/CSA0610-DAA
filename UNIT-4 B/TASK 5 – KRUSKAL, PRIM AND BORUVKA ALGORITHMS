@@ -1,0 +1,172 @@
+
+# Minimum Spanning Tree Algorithms
+
+vertices = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
+
+edges = [
+    ('A', 'B', 4),
+    ('A', 'C', 3),
+    ('B', 'C', 1),
+    ('B', 'D', 2),
+    ('C', 'D', 4),
+    ('C', 'E', 2),
+    ('D', 'E', 3),
+    ('D', 'F', 2),
+    ('E', 'F', 3),
+    ('E', 'G', 2),
+    ('F', 'H', 3),
+    ('G', 'H', 2)
+]
+
+
+# KRUSKAL ALGORITHM
+
+def find(parent, i):
+    if parent[i] != i:
+        parent[i] = find(parent, parent[i])
+    return parent[i]
+
+
+def union(parent, rank, x, y):
+    xroot = find(parent, x)
+    yroot = find(parent, y)
+
+    if xroot == yroot:
+        return False
+
+    if rank[xroot] < rank[yroot]:
+        parent[xroot] = yroot
+
+    elif rank[xroot] > rank[yroot]:
+        parent[yroot] = xroot
+
+    else:
+        parent[yroot] = xroot
+        rank[xroot] += 1
+
+    return True
+
+
+def kruskal():
+    parent = list(range(len(vertices)))
+    rank = [0] * len(vertices)
+
+    result = []
+    total = 0
+
+    for u, v, w in sorted(edges, key=lambda x: x[2]):
+        i = vertices.index(u)
+        j = vertices.index(v)
+
+        if union(parent, rank, i, j):
+            result.append((u, v, w))
+            total += w
+
+    print("\nKRUSKAL RESULT")
+    for edge in result:
+        print(edge)
+
+    print("Total Cost:", total)
+
+
+# PRIM ALGORITHM
+
+def prim():
+    graph = {v: [] for v in vertices}
+
+    for u, v, w in edges:
+        graph[u].append((w, v))
+        graph[v].append((w, u))
+
+    visited = {'A'}
+    result = []
+    total = 0
+
+    while len(visited) < len(vertices):
+
+        candidates = []
+
+        for u in visited:
+            for w, v in graph[u]:
+                if v not in visited:
+                    candidates.append((w, u, v))
+
+        w, u, v = min(candidates)
+
+        visited.add(v)
+        result.append((u, v, w))
+        total += w
+
+    print("\nPRIM RESULT")
+    for edge in result:
+        print(edge)
+
+    print("Total Cost:", total)
+
+
+# BORUVKA ALGORITHM
+
+def boruvka():
+    parent = {v: v for v in vertices}
+    result = []
+    total = 0
+
+    def root(v):
+        while parent[v] != v:
+            parent[v] = parent[parent[v]]
+            v = parent[v]
+        return v
+
+    while len(result) < len(vertices) - 1:
+
+        cheapest = {}
+
+        for u, v, w in edges:
+            set1 = root(u)
+            set2 = root(v)
+
+            if set1 != set2:
+                if set1 not in cheapest or w < cheapest[set1][2]:
+                    cheapest[set1] = (u, v, w)
+
+                if set2 not in cheapest or w < cheapest[set2][2]:
+                    cheapest[set2] = (u, v, w)
+
+        for u, v, w in cheapest.values():
+            set1 = root(u)
+            set2 = root(v)
+
+            if set1 != set2:
+                parent[set1] = set2
+                result.append((u, v, w))
+                total += w
+
+    print("\nBORUVKA RESULT")
+    for edge in result:
+        print(edge)
+
+    print("Total Cost:", total)
+
+
+# MAIN PROGRAM
+
+kruskal()
+prim()
+boruvka()
+
+Sample output :
+KRUSKAL RESULT
+('B', 'C', 1)
+('B', 'D', 2)
+('C', 'E', 2)
+('D', 'F', 2)
+('E', 'G', 2)
+('G', 'H', 2)
+('A', 'C', 3)
+Total Cost: 14
+
+PRIM RESULT
+Total Cost: 14
+
+BORUVKA RESULT
+Total Cost: 14
