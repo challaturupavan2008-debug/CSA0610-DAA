@@ -1,0 +1,56 @@
+#Q2 – Part B: Quick Sort
+
+
+comparisons = 0
+max_depth = 0
+
+def quick_sort(a, low, high, depth=1):
+    global comparisons, max_depth
+
+    if low < high:
+        max_depth = max(max_depth, depth)
+
+        pivot = a[high]
+        i = low - 1
+
+        for j in range(low, high):
+            comparisons += 1
+
+            if a[j] < pivot:
+                i += 1
+                a[i], a[j] = a[j], a[i]
+
+        a[i + 1], a[high] = a[high], a[i + 1]
+
+        pi = i + 1
+
+        quick_sort(a, low, pi - 1, depth + 1)
+        quick_sort(a, pi + 1, high, depth + 1)
+
+
+n = int(input("Enter the number of elements: "))
+
+a = []
+print("Enter the elements:")
+
+for i in range(n):
+    a.append(int(input()))
+
+quick_sort(a, 0, n - 1)
+
+print("Sorted elements:", a)
+print("Number of comparisons:", comparisons)
+print("Maximum recursion depth:", max_depth)
+
+#Sample Output
+Enter the number of elements: 5
+Enter the elements:
+50
+20
+40
+10
+30
+
+Sorted elements: [10, 20, 30, 40, 50]
+Number of comparisons: 6
+Maximum recursion depth: 3
