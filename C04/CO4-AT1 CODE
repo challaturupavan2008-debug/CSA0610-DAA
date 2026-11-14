@@ -1,0 +1,122 @@
+
+from fractions import Fraction
+
+# Read number of features and total budget
+n, W = map(int, input().split())
+
+names = []
+cost = []
+value = []
+
+# Read feature details
+for i in range(n):
+    name, c, v = input().split()
+    names.append(name)
+    cost.append(int(c))
+    value.append(int(v))
+
+# ------------------------------------------------
+# (a) GREEDY ALGORITHM
+# ------------------------------------------------
+
+# Calculate value per unit cost
+ratio_order = sorted(
+    range(n),
+    key=lambda i: Fraction(value[i], cost[i]),
+    reverse=True
+)
+
+greedy_value = 0
+greedy_budget = 0
+
+for i in ratio_order:
+    if greedy_budget + cost[i] <= W:
+        greedy_budget += cost[i]
+        greedy_value += value[i]
+
+# ------------------------------------------------
+# (b) DYNAMIC PROGRAMMING
+# ------------------------------------------------
+
+# DP[i][w] = Maximum value using first i features
+# with budget at most w
+
+dp = [[0] * (W + 1) for _ in range(n + 1)]
+
+for i in range(1, n + 1):
+
+    for w in range(W + 1):
+
+        # Do not select current feature
+        dp[i][w] = dp[i - 1][w]
+
+        # Select current feature if it fits
+        if cost[i - 1] <= w:
+
+            include = (
+                value[i - 1]
+                + dp[i - 1][w - cost[i - 1]]
+            )
+
+            dp[i][w] = max(dp[i][w], include)
+
+# Maximum possible business value
+maximum_value = dp[n][W]
+
+# ------------------------------------------------
+# (c) RECONSTRUCT SELECTED FEATURES
+# ------------------------------------------------
+
+# Find smallest budget achieving maximum value
+best_budget = 0
+
+for w in range(W + 1):
+    if dp[n][w] == maximum_value:
+        best_budget = w
+        break
+
+selected = []
+remaining_budget = best_budget
+
+# Backtrack through DP table
+for i in range(n, 0, -1):
+
+    if dp[i][remaining_budget] != dp[i - 1][remaining_budget]:
+
+        selected.append(names[i - 1])
+
+        remaining_budget -= cost[i - 1]
+
+# Reverse to maintain input order
+selected.reverse()
+
+# Calculate actual budget used
+budget_used = sum(
+    cost[names.index(name)] for name in selected
+)
+
+# ------------------------------------------------
+# (d) DISPLAY FINAL OUTPUT
+# ------------------------------------------------
+
+print("Greedy Value =", greedy_value)
+print("Maximum Value =", maximum_value)
+
+if selected:
+    print("Selected =", " ".join(selected))
+else:
+    print("Selected = NONE")
+
+print("Budget Used =", budget_used)
+Input:
+3 50
+Auth 10 60
+Search 20 100
+Payments 30 120
+
+Expected output:
+Greedy Value = 160
+Maximum Value = 220
+Selected = Search Payments
+Budget Used = 50
+
