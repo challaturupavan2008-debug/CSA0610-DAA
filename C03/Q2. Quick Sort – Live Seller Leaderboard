@@ -1,0 +1,57 @@
+
+# Quick Sort - Seller Leaderboard
+# Median-of-Three Pivot
+
+def median_of_three(arr, low, high):
+    mid = (low + high) // 2
+
+    values = [arr[low], arr[mid], arr[high]]
+    values.sort()
+
+    return values[1]
+
+
+def quick_sort(arr, low, high):
+    if low < high:
+        pivot = median_of_three(arr, low, high)
+
+        i = low
+        j = high
+
+        while i <= j:
+            while arr[i] < pivot:
+                i += 1
+
+            while arr[j] > pivot:
+                j -= 1
+
+            if i <= j:
+                arr[i], arr[j] = arr[j], arr[i]
+                i += 1
+                j -= 1
+
+        if low < j:
+            quick_sort(arr, low, j)
+
+        if i < high:
+            quick_sort(arr, i, high)
+
+
+# Main Program
+scores = [42, 17, 63, 8, 55, 29]
+
+print("Original Seller Scores:")
+print(scores)
+
+quick_sort(scores, 0, len(scores) - 1)
+
+print("\nSorted Seller Scores:")
+print(scores)
+
+
+Output:
+Original Seller Scores:
+[42, 17, 63, 8, 55, 29]
+
+Sorted Seller Scores:
+[8, 17, 29, 42, 55, 63]
