@@ -1,0 +1,71 @@
+
+# Word Wrap using Dynamic Programming
+
+def word_wrap(words, width):
+    n = len(words)
+
+    dp = [float('inf')] * (n + 1)
+    parent = [-1] * (n + 1)
+
+    dp[0] = 0
+
+    for i in range(1, n + 1):
+        line_length = 0
+
+        for j in range(i, 0, -1):
+            line_length += len(words[j - 1])
+
+            if j < i:
+                line_length += 1
+
+            if line_length > width:
+                break
+
+            if i == n:
+                penalty = 0
+            else:
+                spaces = width - line_length
+                penalty = spaces ** 2
+
+            cost = dp[j - 1] + penalty
+
+            if cost < dp[i]:
+                dp[i] = cost
+                parent[i] = j - 1
+
+    if parent[n] == -1:
+        print("A word is longer than the line width.")
+        return
+
+    print("Minimum Penalty:", dp[n])
+    print("\nWord Arrangement:")
+
+    lines = []
+    i = n
+
+    while i > 0:
+        j = parent[i]
+        lines.append(words[j:i])
+        i = j
+
+    lines.reverse()
+
+    for line in lines:
+        print(" ".join(line))
+
+
+# Main Program
+words = ["I", "love", "learning",
+         "algorithms", "every", "day"]
+
+width = 15
+
+word_wrap(words, width)
+
+Sample output:
+Minimum Penalty: 16
+
+Word Arrangement:
+I love learning
+algorithms
+every day
