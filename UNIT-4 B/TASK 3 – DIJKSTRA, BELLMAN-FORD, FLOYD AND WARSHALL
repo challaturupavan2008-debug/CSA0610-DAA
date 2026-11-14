@@ -1,0 +1,182 @@
+
+# Graph Algorithms
+
+INF = float('inf')
+
+vertices = ['S', 'A', 'B', 'C', 'D', 'E', 'F', 'G']
+
+edges = [
+    ('S', 'A', 1),
+    ('S', 'B', 4),
+    ('S', 'F', 10),
+    ('A', 'B', 2),
+    ('A', 'C', 3),
+    ('B', 'C', 1),
+    ('B', 'D', 5),
+    ('C', 'D', 2),
+    ('C', 'E', 3),
+    ('D', 'E', 1),
+    ('D', 'F', 20),
+    ('E', 'G', 2),
+    ('F', 'G', 1)
+]
+
+
+# 1. DIJKSTRA ALGORITHM
+
+def dijkstra(source):
+    distance = {v: INF for v in vertices}
+    visited = set()
+
+    distance[source] = 0
+
+    while len(visited) < len(vertices):
+        current = min(
+            (v for v in vertices if v not in visited),
+            key=lambda v: distance[v]
+        )
+
+        if distance[current] == INF:
+            break
+
+        visited.add(current)
+
+        for u, v, w in edges:
+            if u == current and v not in visited:
+                distance[v] = min(
+                    distance[v],
+                    distance[current] + w
+                )
+
+    print("\nDIJKSTRA RESULT")
+    for v in vertices:
+        print(v, ":", distance[v])
+
+
+# 2. BELLMAN-FORD ALGORITHM
+
+def bellman_ford(source, graph_edges):
+    distance = {v: INF for v in vertices}
+    distance[source] = 0
+
+    for _ in range(len(vertices) - 1):
+        for u, v, w in graph_edges:
+            if distance[u] != INF:
+                distance[v] = min(
+                    distance[v],
+                    distance[u] + w
+                )
+
+    # Negative cycle detection
+    for u, v, w in graph_edges:
+        if distance[u] != INF:
+            if distance[u] + w < distance[v]:
+                print("Negative Cycle Detected!")
+                return
+
+    print("\nBELLMAN-FORD RESULT")
+    for v in vertices:
+        print(v, ":", distance[v])
+
+
+# 3. FLOYD-WARSHALL ALGORITHM
+
+def floyd_warshall():
+    n = len(vertices)
+    index = {v: i for i, v in enumerate(vertices)}
+
+    dist = [[INF] * n for _ in range(n)]
+
+    for i in range(n):
+        dist[i][i] = 0
+
+    for u, v, w in edges:
+        dist[index[u]][index[v]] = w
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                if dist[i][k] != INF and dist[k][j] != INF:
+                    dist[i][j] = min(
+                        dist[i][j],
+                        dist[i][k] + dist[k][j]
+                    )
+
+    print("\nFLOYD-WARSHALL RESULT")
+
+    for row in dist:
+        print([
+            "INF" if x == INF else x
+            for x in row
+        ])
+
+
+# 4. WARSHALL ALGORITHM
+
+def warshall():
+    n = len(vertices)
+    index = {v: i for i, v in enumerate(vertices)}
+
+    reach = [[0] * n for _ in range(n)]
+
+    for i in range(n):
+        reach[i][i] = 1
+
+    for u, v, w in edges:
+        reach[index[u]][index[v]] = 1
+
+    for k in range(n):
+        for i in range(n):
+            for j in range(n):
+                reach[i][j] = (
+                    reach[i][j] or
+                    (reach[i][k] and reach[k][j])
+                )
+
+    print("\nWARSHALL RESULT")
+
+    for row in reach:
+        print(row)
+
+
+# MAIN PROGRAM
+
+dijkstra('S')
+
+# Negative edge example
+negative_edges = edges + [('F', 'A', -15)]
+
+bellman_ford('S', negative_edges)
+
+# Negative cycle example
+cycle_edges = edges + [('F', 'A', -30)]
+
+print("\nNEGATIVE CYCLE TEST")
+bellman_ford('S', cycle_edges)
+
+floyd_warshall()
+warshall()
+
+Sample output:
+DIJKSTRA RESULT
+S : 0
+A : 1
+B : 3
+C : 4
+D : 6
+E : 7
+F : 10
+G : 9
+
+BELLMAN-FORD RESULT
+S : 0
+A : -5
+B : -3
+C : -2
+D : 0
+E : 1
+F : 10
+G : 3
+
+NEGATIVE CYCLE TEST
+Negative Cycle Detected!
