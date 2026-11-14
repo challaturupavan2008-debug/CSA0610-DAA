@@ -1,0 +1,74 @@
+
+# Greedy and Dynamic Programming Knapsack
+
+# Item weights and values
+weights = [10, 20, 30]
+values = [60, 100, 120]
+
+capacity = 50
+n = len(weights)
+
+# FRACTIONAL KNAPSACK - GREEDY
+
+def fractional_knapsack(weights, values, capacity):
+    items = []
+
+    for i in range(len(weights)):
+        ratio = values[i] / weights[i]
+        items.append((ratio, weights[i], values[i]))
+
+    items.sort(reverse=True)
+
+    total_value = 0
+
+    for ratio, weight, value in items:
+        if capacity >= weight:
+            total_value += value
+            capacity -= weight
+        else:
+            total_value += ratio * capacity
+            capacity = 0
+            break
+
+    return total_value
+
+
+# 0/1 KNAPSACK - DYNAMIC PROGRAMMING
+
+def knapsack_dp(weights, values, capacity):
+    n = len(weights)
+
+    dp = [[0] * (capacity + 1)
+          for _ in range(n + 1)]
+
+    for i in range(1, n + 1):
+        for w in range(capacity + 1):
+
+            if weights[i - 1] <= w:
+                dp[i][w] = max(
+                    values[i - 1] +
+                    dp[i - 1][w - weights[i - 1]],
+                    dp[i - 1][w]
+                )
+            else:
+                dp[i][w] = dp[i - 1][w]
+
+    return dp[n][capacity]
+
+
+# Main Program
+
+greedy_result = fractional_knapsack(
+    weights, values, capacity
+)
+
+dp_result = knapsack_dp(
+    weights, values, capacity
+)
+
+print("Fractional Knapsack Result:", greedy_result)
+print("0/1 Knapsack Result:", dp_result)
+
+Sample output:
+Fractional Knapsack Result: 240.0
+0/1 Knapsack Result: 220
