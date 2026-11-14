@@ -1,0 +1,54 @@
+
+# Binary Search - Order Lookup
+# Find First Occurrence
+
+def binary_search(arr, target):
+    low = 0
+    high = len(arr)
+
+    while low < high:
+        mid = (low + high) // 2
+
+        if arr[mid][0] >= target:
+            high = mid
+        else:
+            low = mid + 1
+
+    if low < len(arr) and arr[low][0] == target:
+        return low
+
+    return -1
+
+
+# Main Program
+orders = [
+    (101, "O4"),
+    (102, "O2"),
+    (102, "O5"),
+    (103, "O6"),
+    (105, "O1"),
+    (105, "O3")
+]
+
+target = 102
+
+print("Available Orders:")
+print(orders)
+
+position = binary_search(orders, target)
+
+if position != -1:
+    print("\nOrder Found!")
+    print("Position:", position + 1)
+    print("Order Details:", orders[position])
+else:
+    print("\nOrder Not Found!")
+
+Output:
+Available Orders:
+[(101, 'O4'), (102, 'O2'), (102, 'O5'),
+ (103, 'O6'), (105, 'O1'), (105, 'O3')]
+
+Order Found!
+Position: 2
+Order Details: (102, 'O2')
