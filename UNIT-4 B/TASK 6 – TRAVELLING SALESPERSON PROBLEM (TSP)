@@ -1,0 +1,117 @@
+
+# Travelling Salesperson Problem using Dynamic Programming
+
+INF = float('inf')
+
+# Distance matrix
+# H = Hub, A-F = Delivery locations
+
+distance = [
+    [0, 2, 5, 8, 8, 6, 3],
+    [2, 0, 3, 5, 6, 5, 3],
+    [5, 3, 0, 4, 6, 7, 6],
+    [8, 5, 4, 0, 4, 6, 7],
+    [8, 6, 6, 4, 0, 3, 6],
+    [6, 5, 7, 6, 3, 0, 4],
+    [3, 3, 6, 7, 6, 4, 0]
+]
+
+locations = ['H', 'A', 'B', 'C', 'D', 'E', 'F']
+
+n = len(distance)
+
+# Dynamic Programming function
+
+def tsp():
+
+    dp = {}
+    parent = {}
+
+    # Starting from hub H (vertex 0)
+    for j in range(1, n):
+        mask = 1 << (j - 1)
+
+        dp[(mask, j)] = distance[0][j]
+        parent[(mask, j)] = 0
+
+    # Calculate minimum costs
+    for mask in range(1, 1 << (n - 1)):
+
+        for j in range(1, n):
+
+            if not (mask & (1 << (j - 1))):
+                continue
+
+            previous_mask = mask ^ (1 << (j - 1))
+
+            if previous_mask == 0:
+                continue
+
+            best_cost = INF
+            best_previous = -1
+
+            for i in range(1, n):
+
+                if previous_mask & (1 << (i - 1)):
+
+                    cost = (
+                        dp[(previous_mask, i)]
+                        + distance[i][j]
+                    )
+
+                    if cost < best_cost:
+                        best_cost = cost
+                        best_previous = i
+
+            dp[(mask, j)] = best_cost
+            parent[(mask, j)] = best_previous
+
+    # Find minimum cost to return to hub
+    full_mask = (1 << (n - 1)) - 1
+
+    minimum_cost = INF
+    last_location = -1
+
+    for j in range(1, n):
+
+        cost = dp[(full_mask, j)] + distance[j][0]
+
+        if cost < minimum_cost:
+            minimum_cost = cost
+            last_location = j
+
+    # Reconstruct the route
+    route = []
+    mask = full_mask
+    current = last_location
+
+    while current != 0:
+
+        route.append(current)
+
+        previous = parent[(mask, current)]
+
+        mask ^= (1 << (current - 1))
+        current = previous
+
+    route.reverse()
+
+    route = [0] + route + [0]
+
+    print("Optimal Delivery Route:")
+
+    for i in route:
+        print(locations[i], end=" ")
+
+    print("\nMinimum Travel Cost:", minimum_cost)
+
+
+# MAIN PROGRAM
+
+tsp()
+
+Sample output:
+Optimal Delivery Route:
+H A B C D E F H
+
+Minimum Travel Cost: 23
