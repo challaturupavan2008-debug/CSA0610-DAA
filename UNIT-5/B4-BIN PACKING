@@ -1,0 +1,55 @@
+
+def next_fit(workloads, capacity):
+
+    servers = []
+    remaining = []
+
+    for workload in workloads:
+
+        if workload > capacity or workload <= 0:
+            raise ValueError("Invalid workload")
+
+        if not servers or remaining[-1] < workload:
+
+            servers.append([workload])
+            remaining.append(capacity - workload)
+
+        else:
+
+            servers[-1].append(workload)
+            remaining[-1] -= workload
+
+    print("Total Servers Used:", len(servers))
+
+    for i in range(len(servers)):
+
+        print("Server", i + 1)
+        print("Workloads:", servers[i])
+        print("Remaining Capacity:", remaining[i])
+
+
+# Input
+
+workloads = [6, 5, 5, 4, 4, 6]
+capacity = 10
+
+next_fit(workloads, capacity)
+
+Sample Output:
+Total Servers Used: 4
+
+Server 1
+Workloads: [6]
+Remaining Capacity: 4
+
+Server 2
+Workloads: [5, 5]
+Remaining Capacity: 0
+
+Server 3
+Workloads: [4, 4]
+Remaining Capacity: 2
+
+Server 4
+Workloads: [6]
+Remaining Capacity: 4
