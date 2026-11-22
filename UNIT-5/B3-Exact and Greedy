@@ -68,6 +68,15 @@ greedy, steps = greedy_set_cover(universe, sets)
 
 print("Exact Solution:", exact)
 print("Exact Cover Size:", len(exact))
+
+Sample Output:
+Exact Solution: ['B', 'C']
+Exact Cover Size: 2
+Combinations Checked: 7
+
+Greedy Solution: ['A', 'B', 'C']
+Greedy Cover Size: 3
+Greedy Selections: 3
 print("Combinations Checked:", checks)
 
 print("Greedy Solution:", greedy)
