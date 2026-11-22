@@ -1,0 +1,101 @@
+
+class GraphColouring:
+
+    def __init__(self, graph, m, heuristic=False):
+        self.graph = graph
+        self.m = m
+        self.n = len(graph)
+        self.colour = [-1] * self.n
+        self.nodes = 0
+        self.attempts = 0
+        self.rejected = 0
+        self.backtracks = 0
+        self.max_depth = 0
+        self.heuristic = heuristic
+
+    def choose_vertex(self):
+        uncoloured = [
+            v for v in range(self.n)
+            if self.colour[v] == -1
+        ]
+
+        if not self.heuristic:
+            return uncoloured[0]
+
+        return max(
+            uncoloured,
+            key=lambda v: (
+                len(set(
+                    self.colour[u]
+                    for u in self.graph[v]
+                    if self.colour[u] != -1
+                )),
+                len(self.graph[v])
+            )
+        )
+
+    def is_safe(self, v, c):
+        for u in self.graph[v]:
+            if self.colour[u] == c:
+                return False
+        return True
+
+    def solve(self, depth=0):
+        self.nodes += 1
+        self.max_depth = max(self.max_depth, depth)
+
+        if all(c != -1 for c in self.colour):
+            return True
+
+        v = self.choose_vertex()
+
+        for c in range(self.m):
+            self.attempts += 1
+
+            if self.is_safe(v, c):
+                self.colour[v] = c
+
+                if self.solve(depth + 1):
+                    return True
+
+                self.colour[v] = -1
+                self.backtracks += 1
+
+            else:
+                self.rejected += 1
+
+        return False
+
+    def run(self):
+        result = self.solve()
+
+        print("Colourable:", result)
+        print("Final Colouring:", self.colour)
+        print("Search Nodes:", self.nodes)
+        print("Candidate Assignments:", self.attempts)
+        print("Rejected Branches:", self.rejected)
+        print("Backtracks:", self.backtracks)
+        print("Maximum Search Depth:", self.max_depth)
+
+
+# Test Graph
+graph = {
+    0: [1, 2],
+    1: [0, 2, 3],
+    2: [0, 1, 4],
+    3: [1, 4],
+    4: [2, 3]
+
+Sample Output:
+Colourable: True
+Final Colouring: [0, 1, 2, 0, 1]
+Search Nodes: 6
+Candidate Assignments: 8
+Rejected Branches: 3
+Backtracks: 0
+Maximum Search Depth: 5
+}
+
+g = GraphColouring(graph, 3)
+g.run()
+
