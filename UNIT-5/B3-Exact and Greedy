@@ -1,0 +1,75 @@
+
+from itertools import combinations
+
+def exact_set_cover(universe, sets):
+
+    centres = list(sets.keys())
+    checks = 0
+
+    for r in range(1, len(centres) + 1):
+
+        for combo in combinations(centres, r):
+
+            checks += 1
+            covered = set()
+
+            for c in combo:
+                covered.update(sets[c])
+
+            if covered >= universe:
+                return list(combo), checks
+
+    return None, checks
+
+
+def greedy_set_cover(universe, sets):
+
+    uncovered = set(universe)
+    selected = []
+    steps = 0
+
+    while uncovered:
+
+        best = None
+        maximum = 0
+
+        for centre, zones in sets.items():
+
+            new_zones = uncovered & zones
+
+            if len(new_zones) > maximum:
+                maximum = len(new_zones)
+                best = centre
+
+        if best is None:
+            return None, steps
+
+        selected.append(best)
+        uncovered -= sets[best]
+        steps += 1
+
+    return selected, steps
+
+
+# Test Instance
+
+universe = {1, 2, 3, 4, 5, 6}
+
+sets = {
+    "A": {1, 2, 3, 4},
+    "B": {1, 2, 5},
+    "C": {3, 4, 6},
+    "D": {5},
+    "E": {6}
+}
+
+exact, checks = exact_set_cover(universe, sets)
+greedy, steps = greedy_set_cover(universe, sets)
+
+print("Exact Solution:", exact)
+print("Exact Cover Size:", len(exact))
+print("Combinations Checked:", checks)
+
+print("Greedy Solution:", greedy)
+print("Greedy Cover Size:", len(greedy))
+print("Greedy Selections:", steps)
